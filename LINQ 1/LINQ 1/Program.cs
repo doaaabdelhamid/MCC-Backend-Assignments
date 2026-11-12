@@ -1,4 +1,4 @@
-﻿namespace LINQ_1
+namespace LINQ_1
 {
     internal class Program
     {
@@ -199,6 +199,104 @@
             #endregion
 
             #region Execution Types
+            // 10. Where Query, Add
+
+            // Fleunt Syntax
+            var copiesInStock = books.Where(b => b.CopiesInStock > 0);
+            books.Add(new Book { BookId = 41, Title = "New Book F", Genre = "Programming", Price = 30.5000m, CopiesInStock = 5 });
+            foreach (var book in copiesInStock)
+            {
+                Console.WriteLine(book.Title);
+            }
+            Console.WriteLine("===========================");
+            // Query Syntax
+            var CopiesInStock = from b in books
+                                where b.CopiesInStock > 0
+                                select b;
+            books.Add(new Book { BookId = 42, Title = "New Book Q", Genre = "Programming", Price = 35.5000m, CopiesInStock = 7 });
+            foreach (var book in CopiesInStock)
+            {
+                Console.WriteLine(book.Title);
+            }
+            Console.WriteLine("===========================");
+
+            // Yes, new book appears because the query runs when I loop over it
+            // (foreach), so it sees the list as it is at that moment.
+
+            // Deferred execution: because nothing runs until the foreach, so the new book is included.
+
+
+            // 11. ToList()
+
+            // Fleunt Syntax  
+            var inStock = books.Where(b => b.CopiesInStock > 0).ToList();
+            books.Add(new Book { BookId = 43, Title = "New_Book F", Genre = "Programming", Price = 20.5000m, CopiesInStock = 4 });
+            foreach (var book in inStock)
+            {
+                Console.WriteLine(book.Title);
+            }
+            Console.WriteLine("===========================");
+
+            // Query Syntax
+            var In_Stock = (from b in books
+                           where b.CopiesInStock > 0
+                           select b).ToList();
+            books.Add(new Book { BookId = 44, Title = "New_Book Q", Genre = "Programming", Price = 25.5000m, CopiesInStock = 9 });
+            foreach(var book in In_Stock)
+            {
+                Console.WriteLine(book.Title);
+            }
+            Console.WriteLine("===========================");
+
+            // NO, the book doesn't appear because ToList() forces the query to run right now and stores the result
+            // in a new list. Books added later are NOT in that list.
+
+            // Eager execution: ToList() executes immediately at that line.
+
+
+
+            #endregion
+
+            #region Bonus
+            // 1. Several conditions in one where
+
+            //Fleunt Syntax
+            var differentBooks = books.Where(b => b.Genre == "Science" || b.Genre == "History" && b.Price < 30.0000M);
+            foreach (var book in differentBooks)
+            {
+                Console.WriteLine(book.Title);
+            }
+            Console.WriteLine("===========================");
+
+            // Query Syntax
+            var DifferentBooks = from b in books
+                                 where b.Genre == "Science" || b.Genre == "History"
+                                && b.Price < 30.0000M
+                                 select b; ;
+            foreach (var book in DifferentBooks)
+            {
+                Console.WriteLine(book.Title);
+            }
+            Console.WriteLine("===========================");
+
+            // 2. Select with an index
+
+            // Fleunt Syntax
+            var bookIndex = books.Select((book, index) => new { index, book.Title });
+            foreach (var book in bookIndex)
+            {
+                Console.WriteLine($"{book.index}: {book.Title}");
+            }
+            Console.WriteLine("===========================");
+
+            // Query Syntax 
+            var BookIndex = from b in books.Select((book, index) => new { index, book.Title })
+                            select b;
+            foreach (var book in BookIndex)
+            {
+                Console.WriteLine($"{book.index}: {book.Title}");
+            }
+            Console.WriteLine("===========================");
 
             #endregion
         }
